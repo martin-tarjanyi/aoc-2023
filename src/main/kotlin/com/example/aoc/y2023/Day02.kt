@@ -16,7 +16,7 @@ private fun part1() {
 
     inputLineSequence("day02.txt")
         .map { line -> parseGame(line) }
-        .filter { game -> bag.isPossible(game) }
+        .filter { game -> game.isPossibleWith(bag) }
         .sumOf { game -> game.id }
         .let { println(it) }
 }
@@ -45,10 +45,6 @@ private fun parseGame(line: String): Game {
 }
 
 private data class Bag(val cubes: Map<Color, Long>) {
-    fun isPossible(game: Game): Boolean = game.reveals.all { reveal ->
-        reveal.cubes.all { (color, num) -> num <= (this.cubes[color] ?: 0) }
-    }
-
     fun power(): Long = cubes.values.reduce { a, b -> a * b }
 }
 
@@ -56,6 +52,10 @@ private data class Game(val id: Long, val reveals: List<RevealedSubsets>) {
     fun smallestPossibleBag(): Bag = Color.entries
         .associateWith { color -> reveals.maxOf { reveal -> reveal.cubes[color] ?: 0 } }
         .let { Bag(it) }
+
+    fun isPossibleWith(bag: Bag): Boolean = this.reveals.all { reveal ->
+        reveal.cubes.all { (color, num) -> num <= (bag.cubes[color] ?: 0) }
+    }
 }
 
 private data class RevealedSubsets(val cubes: Map<Color, Long>)
