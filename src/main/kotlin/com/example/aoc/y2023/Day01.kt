@@ -6,7 +6,7 @@ fun main() {
 }
 
 private fun part1() {
-    inputLineSequence("day1.txt")
+    inputLineSequence("day01.txt")
         .map { line ->
             val digits = line.filter { it.isDigit() }
             "${digits.first()}${digits.last()}".toLong()
@@ -28,7 +28,7 @@ private fun part2() {
         "nine" to 9,
     )
 
-    inputLineSequence("day1.txt")
+    inputLineSequence("day01.txt")
         .map { line ->
             val numbersAsStringInLineWithIndex = stringToNum.keys.flatMap {
                 listOf(
