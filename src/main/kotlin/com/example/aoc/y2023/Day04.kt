@@ -4,12 +4,35 @@ import kotlin.math.pow
 import kotlin.math.roundToLong
 
 fun main() {
+    part1()
+    part2()
+}
+
+private fun part1() {
     inputLineSequence("day04.txt")
         .map { parseCard(it) }
         .map { card -> card.playerWinningNumbers() }
         .map { score(it) }
         .sum()
         .let { println(it) }
+}
+
+private fun part2() {
+    val cardsById = inputLineSequence("day04.txt")
+        .map { parseCard(it) }
+        .associateBy { it.id }
+
+    val cardQueue = cardsById.values.sortedBy { it.id }.toCollection(ArrayDeque())
+
+    var totalCards = 0
+    while (cardQueue.isNotEmpty()) {
+        val currentCard = cardQueue.removeFirst()
+        val copiesWon = currentCard.playerWinningNumbers()
+        copiesWon.indices.forEach { i -> cardQueue.addFirst(cardsById[currentCard.id + i + 1]!!) }
+        totalCards++
+    }
+
+    println(totalCards)
 }
 
 private fun score(numbers: List<Long>): Long {
@@ -21,14 +44,15 @@ private fun score(numbers: List<Long>): Long {
 }
 
 private fun parseCard(line: String): Card {
+    val cardId = """Card\s+(\d+):""".toRegex().find(line)?.groups?.get(1)?.value?.toInt()!!
     val (winning, player) = line.substringAfter(": ").split(" | ")
     val winningNumbers = winning.split(" ").filter { it.isNotBlank() }.map { it.toLong() }
     val playerNumbers = player.split(" ").filter { it.isNotBlank() }.map { it.toLong() }
 
-    return Card(winningNumbers, playerNumbers)
+    return Card(cardId, winningNumbers, playerNumbers)
 }
 
-private data class Card(val winningNumbers: List<Long>, val playerNumbers: List<Long>) {
+private data class Card(val id: Int, val winningNumbers: List<Long>, val playerNumbers: List<Long>) {
     fun playerWinningNumbers(): List<Long> {
         val remainingWinningNumbers = winningNumbers.toMutableList()
         return playerNumbers.filter { remainingWinningNumbers.remove(it) }
