@@ -18,21 +18,19 @@ private fun part1() {
 }
 
 private fun part2() {
-    val cardsById = inputLineSequence("day04.txt")
-        .map { parseCard(it) }
-        .associateBy { it.id }
+    val cards = inputLineSequence("day04.txt").map { parseCard(it) }
+    val copiesWonById = cards.associate { it.id to it.playerWinningNumbers().size }
+    val numberOfCardsById = cards.associate { it.id to 1 }.toMutableMap()
 
-    val cardQueue = cardsById.values.sortedBy { it.id }.toCollection(ArrayDeque())
-
-    var totalCards = 0
-    while (cardQueue.isNotEmpty()) {
-        val currentCard = cardQueue.removeFirst()
-        val copiesWon = currentCard.playerWinningNumbers()
-        copiesWon.indices.forEach { i -> cardQueue.addFirst(cardsById[currentCard.id + i + 1]!!) }
-        totalCards++
+    for ((id, numberOfCards) in numberOfCardsById) {
+        val copiesWon = copiesWonById[id]!!
+        repeat(copiesWon) {
+            val cardIdWon = id + it + 1
+            numberOfCardsById.merge(cardIdWon, numberOfCards, Int::plus)
+        }
     }
 
-    println(totalCards)
+    println(numberOfCardsById.values.sum())
 }
 
 private fun score(numbers: List<Long>): Long {
