@@ -83,7 +83,7 @@ private data class Almanac(
         .toList()
 
     private fun toDestination(sourceRange: LongRange, map: Map<LongRange, LongRange>): List<LongRange> {
-        return map
+        val overlapsToDestination = map
             .filterKeys { mapSourceRange -> mapSourceRange overlaps sourceRange }
             .map { (mapSourceRange, mapDestinationRange) ->
                 val overlap = if (sourceRange.first in mapSourceRange) {
@@ -91,11 +91,35 @@ private data class Almanac(
                 } else if (mapSourceRange.first in sourceRange) {
                     mapSourceRange.first..minOf(sourceRange.last, mapSourceRange.last)
                 } else {
-                    error("ooo")
+                    error("Should be overlapping")
                 }
 
-                mapDestinationRange.first + (overlap.first - mapSourceRange.first)..
+                overlap to mapDestinationRange.first + (overlap.first - mapSourceRange.first)..
                         mapDestinationRange.first + (overlap.last - mapSourceRange.first)
             }
+            .toMap()
+
+        val unmappedRanges = findUnmappedRanges(overlapsToDestination.keys, sourceRange)
+
+        return overlapsToDestination.values + unmappedRanges
+    }
+
+    private fun findUnmappedRanges(
+        mappedRanges: Set<LongRange>,
+        sourceRange: LongRange
+    ): List<LongRange> {
+        val overlaps = mappedRanges.sortedBy { it.first }
+        val unmappedRanges = mutableListOf<LongRange>()
+        var currentSource = sourceRange.first
+        for (overlap in overlaps) {
+            if (currentSource !in overlap) {
+                unmappedRanges += currentSource..<overlap.first
+            }
+            currentSource = overlap.last + 1
+        }
+        if (currentSource in sourceRange) {
+            unmappedRanges += currentSource..sourceRange.last
+        }
+        return unmappedRanges
     }
 }
