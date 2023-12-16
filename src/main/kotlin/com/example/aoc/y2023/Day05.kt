@@ -106,14 +106,14 @@ private data class Almanac(
         mappedRanges: Set<LongRange>,
         sourceRange: LongRange
     ): List<LongRange> {
-        val overlaps = mappedRanges.sortedBy { it.first }
+        val sortedMappedRanges = mappedRanges.sortedBy { it.first }
         val unmappedRanges = mutableListOf<LongRange>()
         var currentSource = sourceRange.first
-        for (overlap in overlaps) {
-            if (currentSource !in overlap) {
-                unmappedRanges += currentSource..<overlap.first
+        for (mappedRange in sortedMappedRanges) {
+            if (currentSource !in mappedRange) {
+                unmappedRanges += currentSource..<mappedRange.first
             }
-            currentSource = overlap.last + 1
+            currentSource = mappedRange.last + 1
         }
         if (currentSource in sourceRange) {
             unmappedRanges += currentSource..sourceRange.last
