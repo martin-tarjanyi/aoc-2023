@@ -1,16 +1,19 @@
 package com.example.aoc.y2023
 
 fun main() {
-    part1()
+    // part 1
+    solve { split("\\s+".toRegex()) }
+    // part 2
+    solve { listOf(replace("\\s+".toRegex(), "")) }
 }
 
-private fun part1() {
+private fun solve(splitNumbers: String.() -> List<String>) {
     inputLineSequence("day06.txt")
         .take(2)
         .toList()
         .let { lines ->
-            val times = lines.first().substringAfter(":").trim().split("\\s+".toRegex()).map { it.toLong() }
-            val distances = lines[1].substringAfter(":").trim().split("\\s+".toRegex()).map { it.toLong() }
+            val times = lines.first().substringAfter(":").trim().splitNumbers().map { it.toLong() }
+            val distances = lines[1].substringAfter(":").trim().splitNumbers().map { it.toLong() }
             require(times.size == distances.size) { "$times and $distances must have same size" }
             (0..<times.count())
                 .map { i ->
