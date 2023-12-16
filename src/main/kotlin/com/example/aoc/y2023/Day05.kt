@@ -45,17 +45,22 @@ private fun parseAlmanac(input: List<String>, seedMapper: (List<String>) -> List
 }
 
 private fun mapSeedsForPart1(input: List<String>): List<LongRange> =
-    input.first().removePrefix("seeds:").trim().split(" ").map { it.toLong()..it.toLong() }
+    input.first().removePrefix("seeds:").trim().split(" ")
+        .map { it.toLong()..it.toLong() }
 
 private fun mapSeedsForPart2(input: List<String>): List<LongRange> =
-    input.first().removePrefix("seeds:").trim().split(" ").chunked(2)
+    input.first().removePrefix("seeds:").trim().split(" ")
+        .chunked(2)
         .map { (start, length) -> start.toLong()..<(start.toLong() + length.toLong()) }
 
 private fun parseMap(input: List<String>, mapName: String) =
-    input.dropWhile { !it.contains(mapName) }.drop(1).takeWhile { !it.contains("map") }.associate {
-        val (destinationStart, sourceStart, length) = it.split(" ").map { numString -> numString.toLong() }
-        (sourceStart..<sourceStart + length) to (destinationStart..<destinationStart + length)
-    }
+    input.dropWhile { !it.contains(mapName) }
+        .drop(1)
+        .takeWhile { !it.contains("map") }
+        .associate {
+            val (destinationStart, sourceStart, length) = it.split(" ").map { numString -> numString.toLong() }
+            (sourceStart..<sourceStart + length) to (destinationStart..<destinationStart + length)
+        }
 
 private fun LongRange.overlap(other: LongRange): LongRange? = if (this.first in other) {
     this.first..minOf(this.last, other.last)
