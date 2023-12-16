@@ -57,8 +57,12 @@ private fun parseMap(input: List<String>, mapName: String) =
         (sourceStart..<sourceStart + length) to (destinationStart..<destinationStart + length)
     }
 
-private infix fun LongRange.overlaps(sourceRange: LongRange): Boolean {
-    return this.first in sourceRange || sourceRange.first in this
+private fun LongRange.overlap(other: LongRange): LongRange? = if (this.first in other) {
+    this.first..minOf(this.last, other.last)
+} else if (other.first in this) {
+    other.first..minOf(this.last, other.last)
+} else {
+    null
 }
 
 private data class Almanac(
@@ -84,18 +88,12 @@ private data class Almanac(
 
     private fun toDestination(sourceRange: LongRange, map: Map<LongRange, LongRange>): List<LongRange> {
         val overlapsToDestination = map
-            .filterKeys { mapSourceRange -> mapSourceRange overlaps sourceRange }
-            .map { (mapSourceRange, mapDestinationRange) ->
-                val overlap = if (sourceRange.first in mapSourceRange) {
-                    sourceRange.first..minOf(sourceRange.last, mapSourceRange.last)
-                } else if (mapSourceRange.first in sourceRange) {
-                    mapSourceRange.first..minOf(sourceRange.last, mapSourceRange.last)
-                } else {
-                    error("Should be overlapping")
-                }
-
-                overlap to mapDestinationRange.first + (overlap.first - mapSourceRange.first)..
-                        mapDestinationRange.first + (overlap.last - mapSourceRange.first)
+            .mapNotNull { (mapSourceRange, mapDestinationRange) ->
+                sourceRange.overlap(mapSourceRange)
+                    ?.let { overlap ->
+                        overlap to mapDestinationRange.first + (overlap.first - mapSourceRange.first)..
+                                mapDestinationRange.first + (overlap.last - mapSourceRange.first)
+                    }
             }
             .toMap()
 
