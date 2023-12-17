@@ -9,4 +9,12 @@ fun inputLineSequence(fileName: String): Sequence<String> =
         ?.filter { it.isNotEmpty() }
         ?: throw IllegalArgumentException("Resource not found: $fileName")
 
+fun <T> Sequence<T>.repeat(): Sequence<T> {
+    return sequence {
+        while (true) {
+            yieldAll(this@repeat)
+        }
+    }
+}
+
 private object Resource
