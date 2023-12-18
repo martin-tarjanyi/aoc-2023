@@ -45,9 +45,8 @@ private fun part2() {
 }
 
 private fun sequenceHistory(originalSequence: List<Long>): MutableList<List<Long>> {
-    val nums = originalSequence
-    val sequenceHistory = mutableListOf(nums)
-    var currentSequence = nums
+    val sequenceHistory = mutableListOf(originalSequence)
+    var currentSequence = originalSequence
     while (currentSequence.any { it != 0L }) {
         currentSequence = currentSequence.windowed(2)
             .map { (a, b) -> b - a }
@@ -55,4 +54,3 @@ private fun sequenceHistory(originalSequence: List<Long>): MutableList<List<Long
     }
     return sequenceHistory
 }
-
