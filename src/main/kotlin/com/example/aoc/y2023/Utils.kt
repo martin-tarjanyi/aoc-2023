@@ -18,3 +18,15 @@ fun <T> Sequence<T>.repeat(): Sequence<T> {
 }
 
 private object Resource
+
+data class Position(val row: Int, val column: Int)
+
+fun <T> List<T>.createPairs(): List<Pair<T, T>> {
+    val result = mutableListOf<Pair<T, T>>()
+    for ((i, elem) in this.withIndex()) {
+        for (j in i + 1..<this.size) {
+            result.add(Pair(elem, this[j]))
+        }
+    }
+    return result
+}

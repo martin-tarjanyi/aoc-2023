@@ -165,8 +165,6 @@ private data class Maze(private val field: List<List<Pipe>>) {
     }
 }
 
-private data class Position(val row: Int, val column: Int)
-
 private data class JourneyPosition(val position: Position, val pipe: Pipe, val cameFrom: Direction?)
 
 private fun Position.move(direction: Direction): Position = when (direction) {
