@@ -19,7 +19,7 @@ fun <T> Sequence<T>.repeat(): Sequence<T> {
 
 private object Resource
 
-data class Position(val row: Int, val column: Int)
+data class Position(val row: Long, val column: Long)
 
 fun <T> List<T>.createPairs(): List<Pair<T, T>> {
     val result = mutableListOf<Pair<T, T>>()

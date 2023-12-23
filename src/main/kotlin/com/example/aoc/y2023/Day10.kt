@@ -64,7 +64,7 @@ private data class Maze(private val field: List<List<Pipe>>) {
         for ((rowIndex, row) in field.withIndex()) {
             for ((columnIndex, pipe) in row.withIndex()) {
                 if (pipe == Pipe.STARTING) {
-                    return JourneyPosition(Position(rowIndex, columnIndex), pipe, cameFrom = null)
+                    return JourneyPosition(Position(rowIndex.toLong(), columnIndex.toLong()), pipe, cameFrom = null)
                 }
             }
         }
@@ -85,7 +85,7 @@ private data class Maze(private val field: List<List<Pipe>>) {
     }
 
     fun atPosition(position: Position): Pipe? =
-        field.getOrNull(position.row)?.getOrNull(position.column)
+        field.getOrNull(position.row.toInt())?.getOrNull(position.column.toInt())
 
     fun countEnclosedFieldsBy(journey: List<JourneyPosition>): Long {
         val journeyPositions = journey.map { it.position }
@@ -96,7 +96,7 @@ private data class Maze(private val field: List<List<Pipe>>) {
             var openLBend = false
             var openFBend = false
             for ((columnIndex, pipe) in row.withIndex()) {
-                val position = Position(rowIndex, columnIndex)
+                val position = Position(rowIndex.toLong(), columnIndex.toLong())
                 if (pipe == Pipe.GROUND && inside) {
                     enclosedGrounds++
                     print("I")
@@ -149,7 +149,7 @@ private data class Maze(private val field: List<List<Pipe>>) {
             val pipes = mutableListOf<Pipe>()
             for ((columnIndex, pipe) in row.withIndex()) {
                 if (pipe == Pipe.STARTING) {
-                    val position = Position(rowIndex, columnIndex)
+                    val position = Position(rowIndex.toLong(), columnIndex.toLong())
                     val connections = Direction.entries
                         .filter { direction -> atPosition(position.move(direction))?.hasConnection(direction.opposite) == true }
                         .toSet()
